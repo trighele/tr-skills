@@ -1,0 +1,5 @@
+interface:
+  display_name: "Ask Tom"
+  short_description: "Router over the TR skill tree"
+policy:
+  allow_implicit_invocation: false

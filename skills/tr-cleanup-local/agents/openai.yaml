@@ -1,0 +1,5 @@
+interface:
+  display_name: "Cleanup Local"
+  short_description: "Promote durable notes, then clear the feature's .scratch files"
+policy:
+  allow_implicit_invocation: false

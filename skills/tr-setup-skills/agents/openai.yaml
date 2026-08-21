@@ -1,0 +1,5 @@
+interface:
+  display_name: "Setup TR Skills"
+  short_description: "Configure a repo for the TR skills"
+policy:
+  allow_implicit_invocation: false

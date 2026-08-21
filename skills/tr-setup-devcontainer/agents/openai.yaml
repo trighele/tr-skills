@@ -1,0 +1,5 @@
+interface:
+  display_name: "Setup Dev Container"
+  short_description: "Generate a .devcontainer matched to this machine"
+policy:
+  allow_implicit_invocation: false
