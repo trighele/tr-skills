@@ -24,9 +24,11 @@ sudo chown -R vscode:vscode /home/vscode/.claude 2>/dev/null || true
 
 The `|| true` matters: on some Docker backends the bind mount ignores `chown`, and that's fine — it means the UIDs already lined up.
 
+On a **docker-compose-based** devcontainer, put this mount in the compose file's `volumes:` instead — `${localEnv:}` does not work in compose, so drive the path from a generated `.env` and guard it with `${HOST_HOME:?...}`. See [machine-local-config.md](./machine-local-config.md).
+
 ## Install Claude Code
 
-In `postCreateCommand`, after Node is available:
+Prefer the **Dockerfile** over `postCreateCommand` when Node is already in the image: it is cached across rebuilds, and installing as root lands the binary on `PATH` for the non-root user (check `npm config get prefix` — a prefix of `/usr` or `/usr/local` is what makes this work).
 
 ```bash
 npm install -g @anthropic-ai/claude-code
@@ -40,7 +42,38 @@ If the project doesn't use Node at all, add the Node feature anyway purely for t
 }
 ```
 
-On the **work profile**, this install runs through the corporate proxy — see [proxy-and-certs.md](./proxy-and-certs.md). A failing `npm install -g` here is almost always a CA cert problem, not a Claude problem.
+**Never let this fail the build.** Terminate the install with `|| echo WARN...` so a registry problem doesn't cost the whole image, and report the CLI's presence in `postCreateCommand` instead.
+
+### On a corporate registry, the plain install usually fails
+
+Two independent blocks, and the second one defeats the obvious workaround:
+
+1. **Artifactory's remote-repo retrieval delay.** Mirrors are commonly configured to withhold artifacts younger than ~2 days. Claude Code ships very frequently, so `@latest` is often inside that window and 403s:
+   `npm error 403 Forbidden - GET .../@anthropic-ai/claude-code/-/claude-code-X.Y.Z.tgz`,
+   usually preceded by `npm notice Artifact was created 1 days ago, which is less than the configured delay of 2 days`.
+2. **The public registry is blocked at the network layer.** `--registry=https://registry.npmjs.org` returns a Zscaler block page, which npm reports as `invalid json response body ... Unexpected token '<'` — a confusing error that has nothing to do with npm.
+
+Package **metadata is not delayed**, only tarballs. So query the metadata and install the newest release old enough to have been cached:
+
+```bash
+npm install -g @anthropic-ai/claude-code && exit 0   # try latest first
+
+candidates=$(node -e '
+  const { execSync } = require("node:child_process");
+  const times = JSON.parse(execSync("npm view @anthropic-ai/claude-code time --json", {encoding:"utf8"}));
+  const cutoff = Date.now() - 3 * 864e5;
+  console.log(Object.entries(times)
+    .filter(([v]) => /^\d+\.\d+\.\d+$/.test(v))
+    .filter(([, t]) => new Date(t).getTime() < cutoff)
+    .sort((a, b) => new Date(b[1]) - new Date(a[1]))
+    .slice(0, 5).map(([v]) => v).join(" "));')
+
+for v in $candidates; do npm install -g "@anthropic-ai/claude-code@$v" && exit 0; done
+```
+
+Keep this in a shared `.devcontainer/install-claude-code.sh` rather than inline, especially with more than one image — see the multi-container notes in [machine-local-config.md](./machine-local-config.md) for getting one script into two build contexts.
+
+A failing `npm install -g` is *not* always a CA cert problem — check for the 403/delay notice before reaching for [proxy-and-certs.md](./proxy-and-certs.md).
 
 ## VS Code extension
 

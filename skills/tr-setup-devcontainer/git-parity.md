@@ -91,6 +91,16 @@ git config --global user.email "$(git config -f ~/.gitconfig-host --get user.ema
 
 `${localEnv:USERPROFILE}${localEnv:HOME}` is a deliberate trick: exactly one of the two is set on any given host, so the concatenation resolves to whichever exists. Use it wherever a home-directory path is needed and the profile should not be hard-coded.
 
+**Better, when you already have a bootstrap script** (see [machine-local-config.md](./machine-local-config.md)): skip the mount and pass the identity as environment variables the bootstrap read on the host.
+
+```bash
+# post-create.sh — values come from the generated, gitignored .env
+if [ -n "${GIT_USER_NAME:-}" ];  then git config --global user.name  "$GIT_USER_NAME";  fi
+if [ -n "${GIT_USER_EMAIL:-}" ]; then git config --global user.email "$GIT_USER_EMAIL"; fi
+```
+
+This drops a file bind mount whose failure mode is nasty: if the source path is wrong, Docker silently creates an empty **directory** at `~/.gitconfig-host`, and `git config -f` on a directory fails in a way that reads as "the host had no identity". Nothing is lost by switching — push credentials come from the extension's forwarding either way.
+
 **SSH keys** — VS Code forwards the host SSH agent automatically when an agent is running. Confirm with `ssh-add -l` inside the container. If the host agent isn't running, that's a host-side fix (`Start-Service ssh-agent` on Windows, `ssh-add --apple-use-keychain` on macOS), not a container one.
 
 **GitHub HTTPS** — install the `github-cli` feature and run `gh auth login` once inside the container, or let the mounted `~/.claude` and a mounted `~/.config/gh` carry the token.
