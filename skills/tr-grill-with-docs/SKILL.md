@@ -1,6 +1,6 @@
 ---
 name: tr-grill-with-docs
-description: A relentless one-question-at-a-time interview to sharpen a plan or design, building the project's domain docs (CONTEXT.md and ADRs) as it goes. Stops at the end of the interview; it never writes a spec.
+description: A relentless round-by-round interview to sharpen a plan or design, building the project's domain docs (CONTEXT.md and ADRs) as it goes. Stops at the end of the interview; it never writes a spec.
 disable-model-invocation: true
 ---
 
@@ -10,7 +10,7 @@ The first step of the main flow. Sharpen a rough idea into a shared understandin
 
 ## How to run it
 
-Run a `/tr-grilling` session as the interview: design tree, frontier, **one question per turn** via the question box. All of that skill's rules apply here unchanged.
+Run a `/tr-grilling` session as the interview: design tree, frontier, **the whole frontier asked as one numbered round**, then the next round spun off the answers. All of that skill's rules apply here unchanged.
 
 Alongside it, run `/tr-domain-modeling` continuously. As terms get settled and hard-to-reverse decisions get made during the interview, record them **inline, as they happen**:
 

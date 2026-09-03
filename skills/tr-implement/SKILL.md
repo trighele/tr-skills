@@ -1,6 +1,6 @@
 ---
 name: tr-implement
-description: "Implement a piece of work based on a spec or set of tickets: brief it in plain English first, build it test-first, then report back in three lines you can actually act on."
+description: "Implement a piece of work based on a spec or set of tickets: brief it in plain English first, build it test-first, then report back in four short sections you can actually act on."
 disable-model-invocation: true
 ---
 
@@ -16,6 +16,10 @@ Then give the user a plain-language brief. **At most ten lines**, no jargon, no 
 
 ```
 **<Ticket ref> — <title>**
+
+In my words: <one sentence restating the ticket WITHOUT reusing its phrasing. This is
+the line that catches a misread ticket before it costs a whole session — so paraphrase,
+don't echo.>
 
 What this does: <1–2 sentences, in terms of behaviour the user can observe. Not "adds a
 repository method"; rather "lets a signed-in customer see their balance on the accounts page".>
@@ -39,6 +43,14 @@ Do not begin implementation until the answer comes back. If the user adjusts, re
 
 Drive `/tr-tdd` where possible, at pre-agreed seams. Prefer existing seams; use the highest seam available.
 
+**Announce each slice in exactly one line before you start it:**
+
+```
+→ <the behaviour being built, in plain words>
+```
+
+Nothing else. No narration of file edits, no explanation of your approach, no progress percentages. These markers are the only running commentary, and phase 3 summarises them.
+
 While building:
 
 - Run typechecking regularly
@@ -55,27 +67,42 @@ Keep a running note of two things as you go, because phase 3 needs them and reco
 
 ## Phase 3: Close-out report
 
-Report back in **exactly these three sections and nothing else**. No preamble, no "what I learned", no architecture commentary, no restatement of the diff, no list of files changed (the diff already says that).
+Report back in **exactly these four sections and nothing else**:
 
 ```
-## Verify it yourself
+## What you can do now
 
-The exact commands to run, copy-pasteable, and what you should see when they pass.
-If there's a UI step, say which page and what to click. Two or three steps at most —
-the fastest honest path to seeing it work, not an exhaustive QA script.
+One sentence. The new thing a person using the app can do that they couldn't before.
+No file names, no technical terms.
 
-## Not done
+## How to test it
 
-Anything the ticket asked for that was skipped, deferred, or only partially built, and
-why in half a sentence each. Write "Nothing — the ticket landed complete." if that's true.
+At most 3 numbered steps. Each step is either a command to copy-paste, or
+"open <page>, click <thing>". After each, say what you should see if it worked.
+The fastest honest path to seeing it run — not a QA script.
 
-## Bugs & risks found
+## What I didn't finish
 
-Problems noticed in existing code while working on this, plus anything `/tr-code-review`
-flagged that wasn't fixed. One line each: what it is and where. Write "None." if clean.
+Bullets, at most 4, one plain line each: what the ticket asked for that isn't there,
+and why in half a sentence. Write "Nothing — it's all there." if that's true.
+
+## What I noticed
+
+Bullets, at most 4, one plain line each: problems in the existing code, plus anything
+/tr-code-review flagged that wasn't fixed. Say what's wrong and roughly where, in words
+someone who didn't write it would follow. Write "Nothing." if clean.
 ```
 
-Be honest in every section. If the suite didn't go green, that belongs in **Not done** with the failing output, not omitted. If you cut a corner, it goes in **Not done**. A clean-looking report that isn't true costs more than a messy one that is.
+### Write it for someone who did not read the code
+
+These rules are the point of the report. The section headings alone are not enough — the last version of this skill said "three sections and nothing else" and still produced a wall of implementation vocabulary.
+
+- **No jargon.** Not "seam", "interface", "abstraction", "refactor", "repository", "middleware", "hook", "wire up", "plumb through". If you have to name something, name it the way the app's users would.
+- **Name a file or a function only inside a command to run.** Never in prose.
+- **Nothing outside the four sections.** No preamble, no restatement of the diff, no list of files changed, no summary of your approach, no "what I learned", no architecture commentary, no next steps, no offer to commit.
+- **The whole report fits on one screen.** If it doesn't, you are explaining rather than reporting. Cut it.
+
+Be honest in every section. If the suite didn't go green, that belongs in **What I didn't finish**, with the failing output, not omitted. If you cut a corner, it goes there too. A clean-looking report that isn't true costs more than a messy one that is — and honesty is the one thing that outranks the length caps above.
 
 Then stop. Don't offer next steps, don't start the next ticket, don't ask if they want you to commit.
 
