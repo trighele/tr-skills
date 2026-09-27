@@ -1,0 +1,28 @@
+name: release
+
+# Copy this file into an app repo unchanged. It calls the unified pipeline and does nothing
+# else: every line of it is explained in the pipeline's docs/app-repo-caller-workflow.md.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      commit:
+        description: A past commit to put back, as a full 40-character SHA. Leave empty to release this branch.
+        type: string
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  release:
+    uses: tomrighele/project_unifiedPipeline/.github/workflows/app-release.yml@v1
+    secrets: inherit
+    with:
+      variables: ${{ toJSON(vars) }}
+      commit: ${{ inputs.commit }}

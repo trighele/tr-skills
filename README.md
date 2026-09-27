@@ -1,6 +1,6 @@
 # tr-skills
 
-Tom's engineering skill tree for [Claude Code](https://claude.com/claude-code). Thirteen skills, one main flow: sharpen an idea, spec it, split it, build it, clean up after it.
+Tom's engineering skill tree for [Claude Code](https://claude.com/claude-code). Fourteen skills, one main flow: sharpen an idea, spec it, split it, build it, clean up after it.
 
 Adapted from [Matt Pocock's skills](https://github.com/mattpocock/skills), trimmed to the flow I actually use and reworked to match how I like to work. See [CLAUDE.md](./CLAUDE.md) for what diverges from upstream and why.
 
@@ -31,6 +31,7 @@ Not sure what to run? `/tr-ask-tom`.
 | [`tr-ask-tom`](./skills/tr-ask-tom/) | Router over this tree — which skill fits your situation |
 | [`tr-setup-skills`](./skills/tr-setup-skills/) | Configure a repo: issue tracker (GitHub or local markdown) + domain doc layout |
 | [`tr-setup-devcontainer`](./skills/tr-setup-devcontainer/) | Generate a `.devcontainer/` matched to the machine you're on |
+| [`tr-unified-setup`](./skills/tr-unified-setup/) | Scaffold an empty repo as a unified-pipeline app: Python microservice, or React front end + Python API |
 | [`tr-grill-with-docs`](./skills/tr-grill-with-docs/) | Relentless interview that builds `CONTEXT.md` and ADRs as it goes |
 | [`tr-grilling`](./skills/tr-grilling/) | The interview primitive: design tree, frontier, a round of questions at a time |
 | [`tr-domain-modeling`](./skills/tr-domain-modeling/) | Sharpen domain terminology; write ADRs |
@@ -59,4 +60,4 @@ See [INSTALL.md](./INSTALL.md) for the details, including how this works inside 
 
 ## Credit
 
-The core skills here are Matt Pocock's, from [mattpocock/skills](https://github.com/mattpocock/skills). The customizations, `tr-ask-tom`, `tr-setup-devcontainer`, and `tr-cleanup-local` are mine.
+The core skills here are Matt Pocock's, from [mattpocock/skills](https://github.com/mattpocock/skills). The customizations, `tr-ask-tom`, `tr-setup-devcontainer`, `tr-unified-setup`, and `tr-cleanup-local` are mine.

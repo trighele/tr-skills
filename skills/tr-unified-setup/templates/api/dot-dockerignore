@@ -1,0 +1,15 @@
+# The build context is the repository root, so this applies to every component's build.
+# Anything installed or built outside a container must never reach one: a node_modules or a
+# .venv from a different platform would otherwise be copied in.
+**/node_modules
+**/dist
+**/.venv
+**/__pycache__
+**/.pytest_cache
+.git
+.github
+.devcontainer
+.claude
+.scratch
+**/.env*
+*.log

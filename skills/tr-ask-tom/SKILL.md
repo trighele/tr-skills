@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Ask Tom
 
-You don't remember every skill, so ask. This tree is small on purpose: thirteen skills, one main flow, everything else feeding it.
+You don't remember every skill, so ask. This tree is small on purpose: fourteen skills, one main flow, everything else feeding it.
 
 If the user described a situation, name the one skill to run next and say why in a sentence. If they just typed the command with no context, give them the map below.
 
@@ -14,6 +14,7 @@ If the user described a situation, name the one skill to run next and say why in
 
 - **`/tr-setup-skills`** — once per repo, before anything else. Configures the issue tracker (GitHub or local markdown) and the domain doc layout that every other skill reads from.
 - **`/tr-setup-devcontainer`** — once per project per machine. Generates a `.devcontainer/` matched to the machine you're on, with `~/.claude` mounted and git history working properly inside the container.
+- **`/tr-unified-setup`** — once, in an empty repo, for an app the unified pipeline will deploy. Asks microservice or front end + microservice, then scaffolds a Python API (and a React front end) with `pipeline.yaml`, the caller workflow, Dockerfiles and a passing test each, so only the app's own code is left.
 
 ## The main flow: idea → shipped
 
@@ -54,6 +55,7 @@ Two references that run *beneath* the others, each the source of truth for its v
 | --- | --- |
 | New repo, nothing configured | `/tr-setup-skills` |
 | New machine or new project, no container yet | `/tr-setup-devcontainer` |
+| Empty repo for a new app on the unified pipeline | `/tr-unified-setup` |
 | Rough idea, want it sharpened | `/tr-grill-with-docs` |
 | Idea is sharp, want it written down | `/tr-to-spec` |
 | Spec exists, too big for one session | `/tr-to-tickets` |

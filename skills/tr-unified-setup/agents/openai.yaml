@@ -1,0 +1,5 @@
+interface:
+  display_name: "Unified Setup"
+  short_description: "Scaffold an empty repo as a unified-pipeline app"
+policy:
+  allow_implicit_invocation: false

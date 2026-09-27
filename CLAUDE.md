@@ -4,7 +4,7 @@ Read this first when picking the work back up. It records what this tree is, how
 
 ## What this repo is
 
-A curated fork of [Matt Pocock's skills](https://github.com/mattpocock/skills), cut down from ~42 skills to 13 and reworked to match how Tom engineers. This repo is the **source of truth**; it's destined to become a git repo he can clone to any machine.
+A curated fork of [Matt Pocock's skills](https://github.com/mattpocock/skills), cut down from ~42 skills to 13, then extended with Tom's own, and reworked to match how Tom engineers. This repo is the **source of truth**; it's destined to become a git repo he can clone to any machine.
 
 Layout is flat and deliberate: `skills/tr-<name>/SKILL.md`, one folder per skill, no category directories. That maps one-to-one onto `~/.claude/skills/`, so installing is a copy — see [INSTALL.md](./INSTALL.md) and `sync.sh`.
 
@@ -23,6 +23,7 @@ Layout is flat and deliberate: `skills/tr-<name>/SKILL.md`, one folder per skill
 | `tr-ask-tom` | Router over the tree | user | — |
 | `tr-setup-skills` | Per-repo config: tracker + domain docs | user | — |
 | `tr-setup-devcontainer` | Per-machine `.devcontainer/` | user | — |
+| `tr-unified-setup` | Empty repo → unified-pipeline app scaffold | user | — |
 | `tr-grill-with-docs` | Interview + domain docs | user | `tr-grilling`, `tr-domain-modeling` |
 | `tr-grilling` | Interview primitive | model | — |
 | `tr-domain-modeling` | Terminology + ADRs | model | — |
@@ -68,6 +69,8 @@ Each of these is intentional. If you're editing a skill and something below look
 
 13. **`sync.sh` / `sync.ps1` + `INSTALL.md` are wholly new.** No upstream equivalent that's supported (upstream's `link-skills.sh` is labelled maintainers-only and symlinks). Clone lives outside `~/.claude`; the script pulls, then **copies** `skills/tr-*` into `~/.claude/skills/`. *Why copies, not symlinks:* a symlink into `~/dev/tr-skills` dangles inside a dev container, because the clone isn't mounted there — only `~/.claude` is. *The `.git` rule is about `~/.claude/skills` specifically* — Claude Code keeps its own clones under `~/.claude/plugins/marketplaces/`, so a bare `find ~/.claude -name .git` is not the check. *Design points worth keeping:* the `tr-*` glob is the safety boundary, so `msk-*` and hand-written skills are never touched; **pruning** removes destination `tr-*` dirs no longer in the repo, because a renamed skill otherwise leaves an old copy still answering its slash command; and the script **refuses to create** a missing `~/.claude` rather than inventing one, since an empty one means a wrong path or an unresolved bind mount and creating it silently defers the failure.
 
+14. **`tr-unified-setup` is wholly new.** No upstream equivalent. Scaffolds an **empty** repo as an app repo for Tom's unified pipeline (`tomrighele/project_unifiedPipeline`): one question round (shape, name, exposure), then copies `templates/`. Two shapes only — microservice (`api`, FastAPI/uv) or front end + microservice (`web` React/Vite/TS/nginx + `api` under `/api`, same origin). *Design points worth keeping:* it **refuses non-empty repos** rather than retrofitting; the microservice lives in `apps/api`, not the root, so adding a front end later is an addition rather than a restructure, and the api's path prefix is one constant (`ROUTE_PREFIX`) for the same reason; every component ships a real passing test so `tests: false` never appears; it verifies with the pipeline's own test commands and a root-context `docker build` + health probe; and it doesn't commit, `git init`, or create the GitHub repo. *The templates are hand-maintained copies* of the pipeline's `template/` (the caller workflow byte for byte, `pipeline.yaml` adapted per shape) — when the pipeline's template or its `@v1` pin changes, update `templates/` by hand. Files named `dot-*` in `templates/` become `.`-files on copy, so the tree's own git never reads them as config.
+
 ### The `${localEnv:USERPROFILE}${localEnv:HOME}` trick
 
 Used throughout `tr-setup-devcontainer`. Exactly one of the two variables is set on any host (Windows sets `USERPROFILE`, macOS/Linux set `HOME`), so the concatenation resolves to whichever exists and the unset one expands to empty. This is what lets a single `devcontainer.json` work on all three machines. It looks like a typo; it isn't.
@@ -112,7 +115,7 @@ Then the installer, into a throwaway destination first:
 
 ```bash
 cd ..
-CLAUDE_SKILLS_DIR=/tmp/skilltest ./sync.sh --no-pull       # 13 tr-* dirs
+CLAUDE_SKILLS_DIR=/tmp/skilltest ./sync.sh --no-pull       # 14 tr-* dirs
 mkdir /tmp/skilltest/tr-ghost /tmp/skilltest/msk-keepme
 CLAUDE_SKILLS_DIR=/tmp/skilltest ./sync.sh --no-pull       # tr-ghost pruned, msk-keepme untouched
 find ~/.claude/skills -name .git                           # must stay empty

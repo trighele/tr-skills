@@ -1,0 +1,48 @@
+# The entire contract this application offers the unified pipeline (ADR-0005). Nothing else
+# in this repository says anything about how it is built, run, routed, or exposed. A field the
+# pipeline does not know stops the run before anything is built, with a message naming it.
+
+# The application's name: its internal hostname (<name>.lan.tomrighele.com), the directory it
+# deploys into on the target, and the prefix of every volume and image it owns. Changing it
+# later is a new application beside the old one, not a rename.
+name: __APP_NAME__
+
+# Whether the application is reachable from the public internet. Left out, it is internal:
+# still routed, still reachable at its internal hostname from the home network. Adding this
+# line is the whole of making it public; the release creates the DNS record itself.
+# expose: true
+
+# The public name an exposed application holds instead of <name>.tomrighele.com, for one that
+# cannot take the default. Must be inside tomrighele.com, and needs `expose: true`.
+# hostname: something.tomrighele.com
+
+# Built, published and deployed together at one commit; a rollback names both (ADR-0006).
+# A component's name is its DNS name on this application's own network: a sibling reaches the
+# api at http://api:8000. Renaming one breaks any sibling that addresses it.
+components:
+  # The React front end, served by nginx. It declares no route, so it holds `/` and answers
+  # everything the api has not claimed.
+  - name: web
+    # The directory holding the Dockerfile. The build context is always the repository root.
+    path: apps/web
+    # Tests run as `npm ci && npm test` in apps/web.
+    stack: node
+    # nginx inside the image. Nothing is published to the host.
+    port: 80
+
+  # The API. It answers under /api on the same origin as the front end, so the browser calls
+  # it with a relative path and there is no CORS to configure. The prefix is not stripped:
+  # ROUTE_PREFIX in apps/api/src/api/main.py is "/api" for that reason.
+  - name: api
+    path: apps/api
+    # Tests run as `uv run pytest` in apps/api.
+    stack: python
+    port: 8000
+    route: /api
+    # What the release's health gate fetches. No 2xx and the previous release is put back
+    # (ADR-0011).
+    health_path: /api/healthz
+
+    # Data that must survive a redeploy and a rollback gets a named volume. Nothing backs it
+    # up, ever (ADR-0012).
+    # volume: /data

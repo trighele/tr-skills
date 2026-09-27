@@ -1,0 +1,22 @@
+# Python
+.venv
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Node
+node_modules
+dist
+*.log
+
+# Local configuration. Build-time values are GitHub Variables, runtime values GitHub Secrets.
+.env*
+
+# Editors and OS
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+
+# Claude Code, machine-local
+.claude/settings.local.json

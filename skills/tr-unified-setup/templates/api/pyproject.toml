@@ -1,0 +1,15 @@
+[project]
+name = "__APP_NAME__"
+version = "0.1.0"
+description = "The workspace root. It holds no code of its own; the components live under apps/."
+requires-python = ">=3.12"
+dependencies = []
+
+[tool.uv.workspace]
+# Every Python component is a member here, so there is one .venv and one uv.lock at the root
+# rather than one per component directory. Each component's Dockerfile copies this file and
+# the lock, which is why the build context is the repository root.
+members = ["apps/api"]
+
+[tool.uv]
+package = false
